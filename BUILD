@@ -204,12 +204,7 @@ NSYNC_OPTS_CPP = select({
 }) + select({
     # On Linux, the C++11 library's synchronization primitives are
     # surprisingly slow.   See also NSYNC_SRC_PLATFORM_CPP, below.
-    ":gcc_linux_x86_32_1": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
-    ":gcc_linux_x86_64_1": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
-    ":gcc_linux_x86_64_2": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
-    ":gcc_linux_aarch64": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
-    ":gcc_linux_ppc64": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
-    ":gcc_linux_s390x": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
+    "@bazel_tools//src/conditions:linux": ["-I" + pkg_path_name() + "/platform/c++11.futex"],
     "//conditions:default": [],
 }) + [
     "-DNSYNC_ATOMIC_CPP11",
