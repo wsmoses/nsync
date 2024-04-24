@@ -361,13 +361,8 @@ NSYNC_SRC_FREEBSD = [
 
 # OS-specific library source.
 NSYNC_SRC_PLATFORM = select({
-    ":gcc_linux_x86_32_1": NSYNC_SRC_LINUX,
-    ":gcc_linux_x86_64_1": NSYNC_SRC_LINUX,
-    ":gcc_linux_x86_64_2": NSYNC_SRC_LINUX,
-    ":gcc_linux_aarch64": NSYNC_SRC_LINUX,
-    ":gcc_linux_ppc64": NSYNC_SRC_LINUX,
-    ":gcc_linux_s390x": NSYNC_SRC_LINUX,
-    ":clang_macos_x86_64": NSYNC_SRC_MACOS,
+    "@bazel_tools//src/conditions:linux":  NSYNC_SRC_LINUX,
+    "@bazel_tools//src/conditions:darwin": NSYNC_SRC_MACOS,
     ":freebsd": NSYNC_SRC_FREEBSD,
     ":ios_x86_64": NSYNC_SRC_MACOS,
     ":android_x86_32": NSYNC_SRC_ANDROID,
@@ -507,13 +502,8 @@ NSYNC_TEST_SRC_FREEBSD = [
 
 # OS-specific test library source.
 NSYNC_TEST_SRC_PLATFORM = select({
-    ":gcc_linux_x86_32_1": NSYNC_TEST_SRC_LINUX,
-    ":gcc_linux_x86_64_1": NSYNC_TEST_SRC_LINUX,
-    ":gcc_linux_x86_64_2": NSYNC_TEST_SRC_LINUX,
-    ":gcc_linux_aarch64": NSYNC_TEST_SRC_LINUX,
-    ":gcc_linux_ppc64": NSYNC_TEST_SRC_LINUX,
-    ":gcc_linux_s390x": NSYNC_TEST_SRC_LINUX,
-    ":clang_macos_x86_64": NSYNC_TEST_SRC_MACOS,
+    "@bazel_tools//src/conditions:linux":  NSYNC_TEST_SRC_LINUX,
+    "@bazel_tools//src/conditions:darwin": NSYNC_TEST_SRC_MACOS,
     ":freebsd": NSYNC_TEST_SRC_FREEBSD,
     ":ios_x86_64": NSYNC_TEST_SRC_MACOS,
     ":android_x86_32": NSYNC_TEST_SRC_ANDROID,
