@@ -111,13 +111,8 @@ NSYNC_OPTS_GENERIC = select({
     # Select the CPU architecture include directory.
     # This select() has no real effect in the C++11 build, but satisfies a
     # #include that would otherwise need a #if.
-    ":gcc_linux_x86_32_1": ["-I" + pkg_path_name() + "/platform/x86_32"],
-    ":gcc_linux_x86_64_1": ["-I" + pkg_path_name() + "/platform/x86_64"],
-    ":gcc_linux_x86_64_2": ["-I" + pkg_path_name() + "/platform/x86_64"],
-    ":gcc_linux_aarch64": ["-I" + pkg_path_name() + "/platform/aarch64"],
-    ":gcc_linux_ppc64": ["-I" + pkg_path_name() + "/platform/ppc64"],
-    ":gcc_linux_s390x": ["-I" + pkg_path_name() + "/platform/s390x"],
-    ":clang_macos_x86_64": ["-I" + pkg_path_name() + "/platform/x86_64"],
+    "@platforms//cpu:aarch64": ["-I" + pkg_path_name() + "/platform/aarch64"],
+    "@platforms//cpu:x86_64": ["-I" + pkg_path_name() + "/platform/x86_32"],
     ":freebsd": ["-I" + pkg_path_name() + "/platform/x86_64"],
     ":ios_x86_64": ["-I" + pkg_path_name() + "/platform/x86_64"],
     ":android_x86_32": ["-I" + pkg_path_name() + "/platform/x86_32"],
@@ -144,13 +139,8 @@ NSYNC_OPTS_GENERIC = select({
 # Options for C build, rather then C++11 build.
 NSYNC_OPTS = select({
     # Select the OS include directory.
-    ":gcc_linux_x86_32_1": ["-I" + pkg_path_name() + "/platform/linux"],
-    ":gcc_linux_x86_64_1": ["-I" + pkg_path_name() + "/platform/linux"],
-    ":gcc_linux_x86_64_2": ["-I" + pkg_path_name() + "/platform/linux"],
-    ":gcc_linux_aarch64": ["-I" + pkg_path_name() + "/platform/linux"],
-    ":gcc_linux_ppc64": ["-I" + pkg_path_name() + "/platform/linux"],
-    ":gcc_linux_s390x": ["-I" + pkg_path_name() + "/platform/linux"],
-    ":clang_macos_x86_64": ["-I" + pkg_path_name() + "/platform/macos"],
+    "@bazel_tools//src/conditions:linux": ["-I" + pkg_path_name() + "/platform/linux"],
+    "@bazel_tools//src/conditions:darwin": ["-I" + pkg_path_name() + "/platform/macos"],
     ":freebsd": ["-I" + pkg_path_name() + "/platform/freebsd"],
     ":ios_x86_64": ["-I" + pkg_path_name() + "/platform/macos"],
     ":android_x86_32": ["-I" + pkg_path_name() + "/platform/linux"],
@@ -168,7 +158,7 @@ NSYNC_OPTS = select({
     ":gcc_linux_aarch64": ["-I" + pkg_path_name() + "/platform/gcc"],
     ":gcc_linux_ppc64": ["-I" + pkg_path_name() + "/platform/gcc"],
     ":gcc_linux_s390x": ["-I" + pkg_path_name() + "/platform/gcc"],
-    ":clang_macos_x86_64": ["-I" + pkg_path_name() + "/platform/clang"],
+    "@bazel_tools//src/conditions:darwin": ["-I" + pkg_path_name() + "/platform/clang"],
     ":freebsd": ["-I" + pkg_path_name() + "/platform/clang"],
     ":ios_x86_64": ["-I" + pkg_path_name() + "/platform/clang"],
     ":android_x86_32": ["-I" + pkg_path_name() + "/platform/gcc"],
@@ -182,7 +172,7 @@ NSYNC_OPTS = select({
     # working version of stdatomic.h; so some recent versions need one, and
     # other versions prefer the other.  For the moment, just ignore the
     # depreaction.
-    ":clang_macos_x86_64": ["-Wno-deprecated-declarations"],
+    "@bazel_tools//src/conditions:darwin": ["-Wno-deprecated-declarations"],
     "//conditions:default": [],
 }) + NSYNC_OPTS_GENERIC
 
@@ -199,7 +189,7 @@ NSYNC_OPTS_CPP = select({
 }) + select({
     # Some versions of MacOS (notably Sierra) require -D_DARWIN_C_SOURCE
     # to include some standard C++11 headers, like <mutex>.
-    ":clang_macos_x86_64": ["-D_DARWIN_C_SOURCE"],
+    "@bazel_tools//src/conditions:darwin": ["-D_DARWIN_C_SOURCE"],
     "//conditions:default": [],
 }) + select({
     # On Linux, the C++11 library's synchronization primitives are
@@ -382,16 +372,11 @@ NSYNC_SRC_PLATFORM_CPP = [
     # On Linux, the C++11 library's synchronization primitives are surprisingly
     # slow, at least at the time or writing (early 2018).  Raw kernel
     # primitives are ten times faster for wakeups.
-    ":gcc_linux_x86_32_1": ["platform/linux/src/nsync_semaphore_futex.c"],
-    ":gcc_linux_x86_64_1": ["platform/linux/src/nsync_semaphore_futex.c"],
-    ":gcc_linux_x86_64_2": ["platform/linux/src/nsync_semaphore_futex.c"],
-    ":gcc_linux_aarch64": ["platform/linux/src/nsync_semaphore_futex.c"],
-    ":gcc_linux_ppc64": ["platform/linux/src/nsync_semaphore_futex.c"],
-    ":gcc_linux_s390x": ["platform/linux/src/nsync_semaphore_futex.c"],
+    "@bazel_tools//src/conditions:linux": ["platform/linux/src/nsync_semaphore_futex.c"],
     "//conditions:default": ["platform/c++11/src/nsync_semaphore_mutex.cc"],
 }) + select({
     # MacOS and Android don't have working C++11 thread local storage.
-    ":clang_macos_x86_64": ["platform/posix/src/per_thread_waiter.c"],
+    "@bazel_tools//src/conditions:darwin": ["platform/posix/src/per_thread_waiter.c"],
     ":android_x86_32": ["platform/posix/src/per_thread_waiter.c"],
     ":android_x86_64": ["platform/posix/src/per_thread_waiter.c"],
     ":android_armeabi": ["platform/posix/src/per_thread_waiter.c"],
